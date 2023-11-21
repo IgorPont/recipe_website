@@ -141,4 +141,4 @@ postgres_data
 notebook^-^
 
 .pyc
-.env
+recipe_website/.env
