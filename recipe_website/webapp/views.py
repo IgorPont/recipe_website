@@ -7,4 +7,4 @@ logger = logging.getLogger(__name__)
 
 def index(request):
     logger.info('Index page accessed')
-    return HttpResponse("Скоро открытие! Здесь будет сайт рецептов.")
+    return HttpResponse(f"Скоро открытие!<br>Здесь будет сайт рецептов.")
