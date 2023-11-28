@@ -10,6 +10,11 @@ class Category(models.Model):
         return self.name
 
 
+def user_directory_path(instance, filename):
+    # путь, куда будет осуществлена загрузка MEDIA_ROOT/user_<id>/<filename>
+    return 'user_{0}/{1}'.format(instance.user.id, filename)
+
+
 class Recipe(models.Model):
     title = models.CharField(max_length=150, verbose_name="Заголовок рецепта")
     category = models.ForeignKey(Category, on_delete=models.CASCADE, verbose_name="Категория")
@@ -17,8 +22,8 @@ class Recipe(models.Model):
     ingredients = models.TextField(verbose_name="Ингредиенты")
     cooking_steps = models.TextField(verbose_name="Шаги приготовления")
     cooking_time = models.TimeField(verbose_name="Время приготовления")
-    image = models.ImageField(upload_to='images/', verbose_name="Изображения")
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    image = models.ImageField(upload_to=user_directory_path, verbose_name="Изображения")
+    author = models.ForeignKey(User, on_delete=models.CASCADE)
     active = models.BooleanField(default=True, verbose_name="Статус активности")
     created_date = models.DateTimeField(default=timezone.now, verbose_name="Дата создания")
 
