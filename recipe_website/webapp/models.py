@@ -12,7 +12,7 @@ class Category(models.Model):
 
 def user_directory_path(instance, filename):
     # путь, куда будет осуществлена загрузка MEDIA_ROOT/user_<id>/<filename>
-    return 'user_{0}/{1}'.format(instance.user.id, filename)
+    return 'user_{0}/{1}'.format(instance.author.id, filename)
 
 
 class Recipe(models.Model):

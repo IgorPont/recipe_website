@@ -7,9 +7,11 @@
     <div class="media-body">
         <div class="article-metadata">
             <a class="mr-2" href="#">{{ r.author }}</a>
-            <small class="text-muted">{{ r.created_date }}</small>
+            <!--Выводим только дату, без времени-->
+            <small class="text-muted">{{ r.created_date|date:"d.m.Y" }}</small>
         </div>
         <h2><a class="article-title" href="#">{{ r.title }}</a></h2>
+        <img src="{{ r.image.url }}" class="img-fluid" alt="Шаурма">
         <p class="article-content">{{ r.ingredients }}</p>
     </div>
 </article>

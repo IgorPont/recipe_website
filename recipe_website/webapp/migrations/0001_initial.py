@@ -2,6 +2,7 @@
 
 from django.conf import settings
 from django.db import migrations, models
+import webapp.models
 import django.db.models.deletion
 import django.utils.timezone
 
@@ -31,11 +32,11 @@ class Migration(migrations.Migration):
                 ('ingredients', models.TextField(verbose_name='Ингредиенты')),
                 ('cooking_steps', models.TextField(verbose_name='Шаги приготовления')),
                 ('cooking_time', models.TimeField(verbose_name='Время приготовления')),
-                ('image', models.ImageField(upload_to='images/', verbose_name='Изображения')),
+                ('image', models.ImageField(upload_to=webapp.models.user_directory_path, verbose_name='Изображения')),
                 ('active', models.BooleanField(default=True, verbose_name='Статус активности')),
                 ('created_date', models.DateTimeField(default=django.utils.timezone.now, verbose_name='Дата создания')),
                 ('category', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='webapp.category', verbose_name='Категория')),
-                ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
+                ('author', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
             ],
         ),
     ]

@@ -1,3 +1,3 @@
 from django.test import TestCase
 
-# Create your tests here.
+# todo: Добавить тесты через coverage (изучить доку)

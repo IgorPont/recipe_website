@@ -27,30 +27,30 @@ logger = logging.getLogger(__name__)
 def home(request):
     """Главная страница со всеми опубликованными рецептами"""
 
-    recipes = [
-        {
-            'author': 'Администратор',
-            'created_date': '28.11.2023',
-            'title': 'Заголовок рецепта',
-
-            # todo: Добавить изодбражение блюда
-
-            'ingredients': 'Игридиенты блюда.',
-
-        },
-        {
-            'author': 'Пользователь',
-            'created_date': '28.11.2023',
-            'title': 'Заголовок рецепта',
-
-            # todo: Добавить изодбражение блюда
-
-            'ingredients': 'Игридиенты блюда.',
-        }
-    ]
+    # recipes = [
+    #     {
+    #         'author': 'Администратор',
+    #         'created_date': '28.11.2023',
+    #         'title': 'Заголовок рецепта',
+    #
+    #         # todo: Добавить изодбражение блюда
+    #
+    #         'ingredients': 'Игредиенты блюда.',
+    #
+    #     },
+    #     {
+    #         'author': 'Пользователь',
+    #         'created_date': '28.11.2023',
+    #         'title': 'Заголовок рецепта',
+    #
+    #         # todo: Добавить изодбражение блюда
+    #
+    #         'ingredients': 'Игредиенты блюда.',
+    #     }
+    # ]
 
     context = {
-        'recipes': recipes,
+        'recipes': Recipe.objects.all(),
     }
     return render(request, template_name='webapp/home.html', context=context)
 
