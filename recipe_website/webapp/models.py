@@ -22,8 +22,8 @@ class Recipe(models.Model):
     ingredients = models.TextField(verbose_name="Ингредиенты")
     cooking_steps = models.TextField(verbose_name="Шаги приготовления")
     cooking_time = models.TimeField(verbose_name="Время приготовления")
-    image = models.ImageField(upload_to=user_directory_path, verbose_name="Изображения")
-    author = models.ForeignKey(User, on_delete=models.CASCADE)
+    image = models.ImageField(upload_to=user_directory_path, verbose_name="Изображение блюда")
+    author = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name="Автор рецепта")
     active = models.BooleanField(default=True, verbose_name="Статус активности")
     created_date = models.DateTimeField(default=timezone.now, verbose_name="Дата создания")
 
