@@ -1,5 +1,5 @@
-from .models import Category, Recipe
-from django.shortcuts import render, redirect
+from .models import Recipe
+from django.shortcuts import render
 import logging
 
 logger = logging.getLogger(__name__)
@@ -21,3 +21,4 @@ def about(request):
     return render(request, template_name='webapp/about.html', context=context)
 
 # todo: Добавить свои обработчики ошибок 404, 500 и тд.
+# todo: Дописать логирование методов
