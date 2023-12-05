@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.utils import timezone
+from PIL import Image
 
 
 class Category(models.Model):
@@ -11,8 +12,10 @@ class Category(models.Model):
 
 
 def user_directory_path(instance, filename):
-    # путь, куда будет осуществлена загрузка MEDIA_ROOT/user_<id>/<filename>
-    return 'upload_user_{0}/{1}'.format(instance.author.id, filename)
+    # путь, куда будет осуществлена загрузка MEDIA_ROOT/upload/user_<id>/<date>/<filename>
+    now = timezone.now()
+    today = now.strftime("%Y-%m-%d")
+    return 'upload/user_{0}/{1}/{2}'.format(instance.author.id, today, filename)
 
 
 class Recipe(models.Model):
@@ -29,3 +32,14 @@ class Recipe(models.Model):
 
     def __str__(self):
         return self.title
+
+    # Автоматическое сжатие загруженных пользователем изображений
+    def save(self):
+        super().save()
+
+        img = Image.open(self.image.path)
+
+        if img.height > 768 or img.width > 1024:
+            output_size = (1024, 768)
+            img.thumbnail(output_size)
+            img.save(self.image.path)
