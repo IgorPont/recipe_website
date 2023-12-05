@@ -1,13 +1,30 @@
 from django import forms
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
+from .models import Profile
 
-"""
-Форма при регистрации
-"""
+
 class UserRegisterForm(UserCreationForm):
-    email = forms.EmailField()
+    """Форма регистрации пользователя на сайте"""
 
+    email = forms.EmailField()
     class Meta:
         model = User
         fields = ['username', 'email', 'password1', 'password2']
+
+
+class UserUpdateForm(forms.ModelForm):
+    """Обновление данных пользователем на сайте"""
+
+    email = forms.EmailField()
+    class Meta:
+        model = User
+        fields = ['username', 'email']
+
+
+class ProfileUpdateForm(forms.ModelForm):
+    """Обновление аватара пользователем на сайте"""
+
+    class Meta:
+        model = Profile
+        fields = ['image']
