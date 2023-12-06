@@ -7,6 +7,10 @@ from PIL import Image
 class Category(models.Model):
     name = models.CharField(max_length=100, verbose_name="Название категории")
 
+    class Meta:
+        verbose_name = 'Категория рецепов'
+        verbose_name_plural = 'Категории рецептов'
+
     def __str__(self):
         return self.name
 
@@ -29,6 +33,10 @@ class Recipe(models.Model):
     author = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name="Автор рецепта")
     active = models.BooleanField(default=True, verbose_name="Статус активности")
     created_date = models.DateTimeField(default=timezone.now, verbose_name="Дата создания")
+
+    class Meta:
+        verbose_name = 'Рецепт'
+        verbose_name_plural = 'Рецепты'
 
     def __str__(self):
         return self.title
