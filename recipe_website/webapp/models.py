@@ -1,7 +1,9 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.urls import reverse
 from django.utils import timezone
-from PIL import Image
+from imagekit.models import ProcessedImageField
+from imagekit.processors import ResizeToFit
 
 
 class Category(models.Model):
@@ -16,10 +18,13 @@ class Category(models.Model):
 
 
 def user_directory_path(instance, filename):
-    # путь, куда будет осуществлена загрузка MEDIA_ROOT/upload/user_<id>/<date>/<filename>
+    """
+    Генерация пути, куда будет осуществлена загрузка изображения
+    (MEDIA_ROOT/users_media/upload/user_<id>/<date>/<filename>)
+    """
     now = timezone.now()
     today = now.strftime("%Y-%m-%d")
-    return 'upload/user_{0}/{1}/{2}'.format(instance.author.id, today, filename)
+    return 'users_media/upload/user_{0}/{1}/{2}'.format(instance.author.id, today, filename)
 
 
 class Recipe(models.Model):
@@ -28,8 +33,9 @@ class Recipe(models.Model):
     description = models.TextField(verbose_name="Описание рецепта")
     ingredients = models.TextField(verbose_name="Ингредиенты")
     cooking_steps = models.TextField(verbose_name="Шаги приготовления")
-    cooking_time = models.TimeField(verbose_name="Время приготовления")
-    image = models.ImageField(upload_to=user_directory_path, verbose_name="Изображение блюда")
+    cooking_time = models.DurationField(verbose_name="Время приготовления")
+    image = ProcessedImageField(upload_to=user_directory_path, processors=[ResizeToFit(1024, 768)], format='JPEG',
+                                options={'quality': 90}, verbose_name="Изображение блюда")
     author = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name="Автор рецепта")
     active = models.BooleanField(default=True, verbose_name="Статус активности")
     created_date = models.DateTimeField(default=timezone.now, verbose_name="Дата создания")
@@ -41,13 +47,18 @@ class Recipe(models.Model):
     def __str__(self):
         return self.title
 
-    # Автоматическое сжатие загруженных пользователем изображений
-    def save(self):
-        super().save()
+    def get_absolute_url(self):
+        """
+        Перенаправление нового пользователя на отдельную страницу с рецептом
+        """
+        return reverse('recipe-detail', kwargs={'pk': self.pk})
 
-        img = Image.open(self.image.path)
-
-        if img.height > 768 or img.width > 1024:
-            output_size = (1024, 768)
-            img.thumbnail(output_size)
-            img.save(self.image.path)
+    def save(self, *args, **kwargs):
+        """
+        Перед сохранением объекта, удаляем старое изображение
+        """
+        if self.pk:
+            old_recipe = Recipe.objects.get(pk=self.pk)
+            if self.image != old_recipe.image:
+                old_recipe.image.delete(save=False)
+        super().save(*args, **kwargs)

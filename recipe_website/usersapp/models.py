@@ -1,17 +1,19 @@
 from django.db import models
 from django.contrib.auth.models import User
-from django.utils import timezone
 from PIL import Image
 
 
 def user_directory_path(instance, filename):
-    # путь, куда будет осуществлена загрузка MEDIA_ROOT/profile_pics/user_<id>/<filename>
-    return 'profile_pics/user_{0}/{1}'.format(instance.user.id, filename)
+    """
+    Генерация пути, куда будет осуществлена загрузка изображения
+    (MEDIA_ROOT/users_media/profile_pics/user_<id>/<filename>)
+    """
+    return 'users_media/profile_pics/user_{0}/{1}'.format(instance.user.id, filename)
 
 
 class Profile(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE, verbose_name="Пользователь сайта")
-    image = models.ImageField(default='default.jpg', upload_to=user_directory_path, verbose_name="Аватар")
+    user: User = models.OneToOneField(User, on_delete=models.CASCADE, verbose_name="Пользователь сайта")
+    image = models.ImageField(default='avatar_default.jpg', upload_to=user_directory_path, verbose_name="Аватар")
 
     class Meta:
         verbose_name = 'Профиль пользователя сайта'
@@ -20,13 +22,26 @@ class Profile(models.Model):
     def __str__(self):
         return f'{self.user.username} Profile'
 
-    # Автоматическое сжатие загруженных пользователем аватарок
-    def save(self):
-        super().save()
+    def save(self, *args, **kwargs):
+        """
+        Переопределение метода save для сжатия загруженных пользователем аватарок
+        """
+        super().save(*args, **kwargs)
 
-        img = Image.open(self.image.path)
+        valid_extensions = ['.jpg', '.jpeg', '.png', '.gif']
 
-        if img.height > 300 or img.width > 300:
-            output_size = (300, 300)
-            img.thumbnail(output_size)
-            img.save(self.image.path)
+        if any(self.image.path.lower().endswith(ext) for ext in valid_extensions):
+            # проверка, что загруженный файл является изображением
+            img = Image.open(self.image.path)
+
+            if img.width > 300 or img.height > 300:
+                output_size = (300, 300)
+                img.thumbnail(output_size)
+                img.save(self.image.path)
+
+    def delete(self, *args, **kwargs):
+        """
+        Переопределение метода delete для удаления изображения при удалении профиля
+        """
+        self.image.delete()
+        super().delete(*args, **kwargs)

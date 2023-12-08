@@ -19,7 +19,7 @@ class Migration(migrations.Migration):
             name='Profile',
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('image', models.ImageField(default='default.jpg', upload_to=webapp.models.user_directory_path, verbose_name='Аватар')),
+                ('image', models.ImageField(default='avatar_default.jpg', upload_to=webapp.models.user_directory_path, verbose_name='Аватар')),
                 ('user', models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL, verbose_name='Пользователь сайта')),
             ],
         ),

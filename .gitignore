@@ -142,5 +142,6 @@ notebook^-^
 
 .pyc
 recipe_website/.env
+posts.json
 
-media/
+users_media/

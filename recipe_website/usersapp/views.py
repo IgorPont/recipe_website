@@ -5,7 +5,9 @@ from .forms import UserRegisterForm, UserUpdateForm, ProfileUpdateForm
 
 
 def register(request):
-    """Добавление данных пользователем сайта"""
+    """
+    Добавление данных пользователем сайта
+    """
     if request.method == 'POST':
         form = UserRegisterForm(request.POST)
         if form.is_valid():
@@ -20,7 +22,9 @@ def register(request):
 
 @login_required
 def profile(request):
-    """Изменение данных профиля пользователем сайта"""
+    """
+    Изменение данных профиля пользователем сайта
+    """
     if request.method == 'POST':
         u_form = UserUpdateForm(request.POST, instance=request.user)
         p_form = ProfileUpdateForm(request.POST,
