@@ -1,7 +1,8 @@
 {% extends "base.html" %}
 {% block content %}
-    <h2 class="mb-3">Рецепты пользователя {{ view.kwargs.username }}<br>(Опубликовано: {{ page_obj.paginator.count }})</h2>
-    {% for r in recipes %}
+    <h2 class="mb-3">Рецепты из категории "{{ category.name }}"</h2>
+    {% if recipes %}
+        {% for r in recipes %}
             <article class="media content-section">
                 <img class="rounded-circle article-img" src="{{ r.author.profile.image.url }}" alt="{{ r.author.username }}'s profile image">
                 <div class="media-body">
@@ -17,6 +18,9 @@
                  </div>
             </article>
         {% endfor %}
+    {% else %}
+        <h6 class="mb-3">В этой категории рецепты пока не добавлены</h6>
+    {% endif %}
     <!--Пагинация-->
     <div class="pagination justify-content-center">
         {% if is_paginated %}

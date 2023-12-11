@@ -8,6 +8,7 @@ from .views import (
     RecipeCreateView,
     RecipeUpdateView,
     RecipeDeleteView,
+    RecipeByCategoryView,
     AboutView
 )
 from . import views
@@ -19,10 +20,8 @@ urlpatterns = [
     path('recipe/new/', RecipeCreateView.as_view(), name='recipe-create'),
     path('recipe/<int:pk>/update/', RecipeUpdateView.as_view(), name='recipe-update'),
     path('recipe/<int:pk>/delete/', RecipeDeleteView.as_view(), name='recipe-delete'),
+    path('recipes/category/<int:category_id>/', RecipeByCategoryView.as_view(), name='recipes-by-category'),
     path('about/', AboutView.as_view(), name='webapp-about'),
-    # маршруты для отображения через функции представления
-    # path('', views.home, name='webapp-home'),
-    # path('about/', views.about, name='webapp-about'),
 ]
 
 # включаем возможность обработки картинок в режиме DEBUG
