@@ -9,6 +9,7 @@ from .models import Recipe, Category
 from .forms import RecipeForm
 from django.urls import reverse_lazy
 from django.contrib import messages
+from django.views import View
 import logging
 
 logger = logging.getLogger(__name__)
@@ -92,6 +93,7 @@ class RecipeCreateView(LoginRequiredMixin, CreateView):
 
     def form_valid(self, form):
         form.instance.author = self.request.user
+        form.instance.title = form.cleaned_data['title'].upper()
         result = super().form_valid(form)
         messages.success(self.request, 'Рецепт успешно добавлен.')
         return result
@@ -118,6 +120,7 @@ class RecipeUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
 
     def form_valid(self, form):
         form.instance.author = self.request.user
+        form.instance.title = form.cleaned_data['title'].upper()
         result = super().form_valid(form)
         messages.success(self.request, 'Рецепт успешно обновлен.')
         return result
@@ -173,8 +176,17 @@ class AboutView(TemplateView):
         context['categories'] = Category.objects.all()
         return context
 
-# todo: Добавить свои обработчики ошибок 404, 500 и тд.
+
+class Error404View(View):
+    def get(self, request, *args, **kwargs):
+        return render(request, 'errors/404.html', status=404)
+
+
+class Error500View(View):
+    def get(self, request, *args, **kwargs):
+        return render(request, 'errors/500.html', status=500)
+
+
 # todo: Дописать логирование
 # todo: Дописать обработку исключений при работе с базой данных
-# todo: Добавить детальное описание рецепта при клике по его заголовку + уменьшить также картинку
-# todo: Добавить отображение категорий
+# todo: Накатить тесты
