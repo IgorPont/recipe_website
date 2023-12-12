@@ -4,7 +4,7 @@ from django.dispatch import receiver
 from .models import Profile
 
 """
-Автоматическое создание профилей (class Profile) при регистрации пользователя на сайте
+Автоматическое создание профилей (модель Profile) при регистрации пользователя на сайте
 """
 
 

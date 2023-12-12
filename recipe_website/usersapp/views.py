@@ -15,7 +15,7 @@ def register(request):
         if form.is_valid():
             form.save()
             username = form.cleaned_data.get('username')
-            messages.success(request, f'{username}, аккаунт создан! Можно войти в личный кабинет.')
+            messages.success(request, f'{username}, аккаунт создан! Можно авторизоваться в личном кабинете.')
             return redirect('login')
     else:
         form = UserRegisterForm()

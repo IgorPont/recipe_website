@@ -55,6 +55,9 @@ class UserRecipeListView(ListView):
 
 
 class RecipeByCategoryView(ListView):
+    """
+    Отображает список объектов модели Recipe по ключу выбранной модели Category
+    """
     model = Recipe
     template_name = 'webapp/recipes_by_category.html'
     context_object_name = 'recipes'
@@ -64,6 +67,7 @@ class RecipeByCategoryView(ListView):
         return Recipe.objects.filter(category=category)
 
     def get_context_data(self, **kwargs):
+        # Обработчик переменной 'categories' для меню категорий рецептов
         context = super().get_context_data(**kwargs)
         context['category'] = get_object_or_404(Category, id=self.kwargs['category_id'])
         context['categories'] = Category.objects.all()
@@ -126,6 +130,7 @@ class RecipeUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
         return result
 
     def test_func(self):
+        # Проверка, что авторизованный пользователь является автором рецепта
         recipe = self.get_object()
         if self.request.user == recipe.author:
             return True
@@ -147,6 +152,7 @@ class RecipeDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     success_url = reverse_lazy('webapp-home')
 
     def test_func(self):
+        # Проверка, что авторизованный пользователь является автором рецепта
         recipe = self.get_object()
         if self.request.user == recipe.author:
             return True
@@ -178,11 +184,17 @@ class AboutView(TemplateView):
 
 
 class Error404View(View):
+    """
+    Пользовательское представление ошибки 404
+    """
     def get(self, request, *args, **kwargs):
         return render(request, 'errors/404.html', status=404)
 
 
 class Error500View(View):
+    """
+    Пользовательское представление ошибки 500
+    """
     def get(self, request, *args, **kwargs):
         return render(request, 'errors/500.html', status=500)
 

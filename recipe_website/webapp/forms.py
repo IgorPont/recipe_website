@@ -4,7 +4,7 @@ from .models import Recipe
 
 class RecipeForm(forms.ModelForm):
     """
-    Кастомный виджет для поля cooking_time модели Recipe
+    Кастомный виджет для формы поля cooking_time модели Recipe
     """
     class Meta:
         model = Recipe

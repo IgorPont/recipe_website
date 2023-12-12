@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.core.files.storage import default_storage
 from PIL import Image
 
 
@@ -24,17 +25,26 @@ class Profile(models.Model):
 
     def save(self, *args, **kwargs):
         """
-        Переопределение метода save для сжатия загруженных пользователем аватарок
+        Переопределение метода save для сжатия загруженных пользователем аватарок,
+        а также удаление старых аватарок, при их обновлении новыми
         """
+        old_image_path = self.image.path if self.pk else None
+
         super().save(*args, **kwargs)
+
+        if self.image and old_image_path:
+            # Перед сохранением нового изображения удаляем старое
+            if default_storage.exists(old_image_path):
+                default_storage.delete(old_image_path)
 
         valid_extensions = ['.jpg', '.jpeg', '.png', '.gif']
 
         if any(self.image.path.lower().endswith(ext) for ext in valid_extensions):
-            # проверка, что загруженный файл является изображением
+            # Проверка, что загруженный файл является изображением
             img = Image.open(self.image.path)
 
             if img.width > 300 or img.height > 300:
+                # Сжимаем изображение
                 output_size = (300, 300)
                 img.thumbnail(output_size)
                 img.save(self.image.path)
