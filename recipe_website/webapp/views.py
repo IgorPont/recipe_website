@@ -29,9 +29,13 @@ class RecipeListView(ListView):
 
     def get_context_data(self, **kwargs):
         # Обработчик переменной 'categories' для меню категорий рецептов
-        context = super().get_context_data(**kwargs)
-        context['categories'] = Category.objects.all()
-        return context
+        try:
+            context = super().get_context_data(**kwargs)
+            context['categories'] = Category.objects.all()
+            return context
+        except Exception as e:
+            logger.error(f"An error occurred in RecipeListView: {str(e)}")
+            raise
 
 
 class UserRecipeListView(ListView):
@@ -44,14 +48,22 @@ class UserRecipeListView(ListView):
     paginate_by = 6
 
     def get_queryset(self):
-        user = get_object_or_404(User, username=self.kwargs.get('username'))
-        return Recipe.objects.filter(author=user).order_by('-created_date')
+        try:
+            user = get_object_or_404(User, username=self.kwargs.get('username'))
+            return Recipe.objects.filter(author=user).order_by('-created_date')
+        except Exception as e:
+            logger.error(f"An error occurred in UserRecipeListView: {str(e)}")
+            raise
 
     def get_context_data(self, **kwargs):
         # Обработчик переменной 'categories' для меню категорий рецептов
-        context = super().get_context_data(**kwargs)
-        context['categories'] = Category.objects.all()
-        return context
+        try:
+            context = super().get_context_data(**kwargs)
+            context['categories'] = Category.objects.all()
+            return context
+        except Exception as e:
+            logger.error(f"An error occurred in UserRecipeListView: {str(e)}")
+            raise
 
 
 class RecipeByCategoryView(ListView):
@@ -63,15 +75,23 @@ class RecipeByCategoryView(ListView):
     context_object_name = 'recipes'
 
     def get_queryset(self):
-        category = get_object_or_404(Category, id=self.kwargs['category_id'])
-        return Recipe.objects.filter(category=category)
+        try:
+            category = get_object_or_404(Category, id=self.kwargs['category_id'])
+            return Recipe.objects.filter(category=category)
+        except Exception as e:
+            logger.error(f"An error occurred in RecipeByCategoryView: {str(e)}")
+            raise
 
     def get_context_data(self, **kwargs):
         # Обработчик переменной 'categories' для меню категорий рецептов
-        context = super().get_context_data(**kwargs)
-        context['category'] = get_object_or_404(Category, id=self.kwargs['category_id'])
-        context['categories'] = Category.objects.all()
-        return context
+        try:
+            context = super().get_context_data(**kwargs)
+            context['category'] = get_object_or_404(Category, id=self.kwargs['category_id'])
+            context['categories'] = Category.objects.all()
+            return context
+        except Exception as e:
+            logger.error(f"An error occurred in RecipeByCategoryView: {str(e)}")
+            raise
 
 
 class RecipeDetailView(DetailView):
@@ -82,9 +102,13 @@ class RecipeDetailView(DetailView):
 
     def get_context_data(self, **kwargs):
         # Обработчик переменной 'categories' для меню категорий рецептов
-        context = super().get_context_data(**kwargs)
-        context['categories'] = Category.objects.all()
-        return context
+        try:
+            context = super().get_context_data(**kwargs)
+            context['categories'] = Category.objects.all()
+            return context
+        except Exception as e:
+            logger.error(f"An error occurred in RecipeDetailView: {str(e)}")
+            raise
 
 
 class RecipeCreateView(LoginRequiredMixin, CreateView):
@@ -93,23 +117,39 @@ class RecipeCreateView(LoginRequiredMixin, CreateView):
     где автором будет текущий аутентифицированный пользователь
     """
     model = Recipe
-    form_class = RecipeForm
+    # Кастомный виджет формы поля
+    # form_class = RecipeForm
+    fields = ['title', 'category', 'description',
+              'ingredients', 'cooking_steps',
+              'cooking_time', 'active', 'image', ]
 
     def form_valid(self, form):
-        form.instance.author = self.request.user
-        form.instance.title = form.cleaned_data['title'].upper()
-        result = super().form_valid(form)
-        messages.success(self.request, 'Рецепт успешно добавлен.')
-        return result
+        try:
+            form.instance.author = self.request.user
+            form.instance.title = form.cleaned_data['title'].upper()
+            result = super().form_valid(form)
+            messages.success(self.request, 'Рецепт успешно добавлен.')
+            return result
+        except Exception as e:
+            logger.error(f"An error occurred in RecipeCreateView: {str(e)}")
+            raise
 
     def form_invalid(self, form):
-        return super().form_invalid(form)
+        try:
+            return super().form_invalid(form)
+        except Exception as e:
+            logger.error(f"An error occurred in RecipeCreateView: {str(e)}")
+            raise
 
     def get_context_data(self, **kwargs):
         # Обработчик переменной 'categories' для меню категорий рецептов
-        context = super().get_context_data(**kwargs)
-        context['categories'] = Category.objects.all()
-        return context
+        try:
+            context = super().get_context_data(**kwargs)
+            context['categories'] = Category.objects.all()
+            return context
+        except Exception as e:
+            logger.error(f"An error occurred in RecipeCreateView: {str(e)}")
+            raise
 
 
 class RecipeUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
@@ -119,28 +159,40 @@ class RecipeUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     """
     model = Recipe
     fields = ['title', 'category', 'description',
-              'ingredients', 'cooking_steps', 'cooking_time',
-              'active', 'image', ]
+              'ingredients', 'cooking_steps',
+              'cooking_time', 'active', 'image', ]
 
     def form_valid(self, form):
-        form.instance.author = self.request.user
-        form.instance.title = form.cleaned_data['title'].upper()
-        result = super().form_valid(form)
-        messages.success(self.request, 'Рецепт успешно обновлен.')
-        return result
+        try:
+            form.instance.author = self.request.user
+            form.instance.title = form.cleaned_data['title'].upper()
+            result = super().form_valid(form)
+            messages.success(self.request, f'Рецепт успешно изменен.')
+            return result
+        except Exception as e:
+            logger.error(f"An error occurred in RecipeUpdateView: {str(e)}")
+            raise
 
     def test_func(self):
         # Проверка, что авторизованный пользователь является автором рецепта
-        recipe = self.get_object()
-        if self.request.user == recipe.author:
-            return True
-        return False
+        try:
+            recipe = self.get_object()
+            if self.request.user == recipe.author:
+                return True
+            return False
+        except Exception as e:
+            logger.error(f"An error occurred in RecipeUpdateView: {str(e)}")
+            raise
 
     def get_context_data(self, **kwargs):
         # Обработчик переменной 'categories' для меню категорий рецептов
-        context = super().get_context_data(**kwargs)
-        context['categories'] = Category.objects.all()
-        return context
+        try:
+            context = super().get_context_data(**kwargs)
+            context['categories'] = Category.objects.all()
+            return context
+        except Exception as e:
+            logger.error(f"An error occurred in RecipeUpdateView: {str(e)}")
+            raise
 
 
 class RecipeDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
@@ -153,20 +205,32 @@ class RecipeDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
 
     def test_func(self):
         # Проверка, что авторизованный пользователь является автором рецепта
-        recipe = self.get_object()
-        if self.request.user == recipe.author:
-            return True
-        return False
+        try:
+            recipe = self.get_object()
+            if self.request.user == recipe.author:
+                return True
+            return False
+        except Exception as e:
+            logger.error(f"An error occurred in RecipeDeleteView: {str(e)}")
+            raise
 
     def delete(self, request, *args, **kwargs):
-        messages.success(self.request, 'Рецепт успешно удален.')
-        return super().delete(request, *args, **kwargs)
+        try:
+            messages.success(self.request, f'Рецепт успешно удален.')
+            return super().delete(request, *args, **kwargs)
+        except Exception as e:
+            logger.error(f"An error occurred in RecipeDeleteView: {str(e)}")
+            raise
 
     def get_context_data(self, **kwargs):
         # Обработчик переменной 'categories' для меню категорий рецептов
-        context = super().get_context_data(**kwargs)
-        context['categories'] = Category.objects.all()
-        return context
+        try:
+            context = super().get_context_data(**kwargs)
+            context['categories'] = Category.objects.all()
+            return context
+        except Exception as e:
+            logger.error(f"An error occurred in RecipeDeleteView: {str(e)}")
+            raise
 
 
 class AboutView(TemplateView):
@@ -178,24 +242,34 @@ class AboutView(TemplateView):
 
     def get_context_data(self, **kwargs):
         # Обработчик переменной 'categories' для меню категорий рецептов
-        context = super().get_context_data(**kwargs)
-        context['categories'] = Category.objects.all()
-        return context
+        try:
+            context = super().get_context_data(**kwargs)
+            context['categories'] = Category.objects.all()
+            return context
+        except Exception as e:
+            logger.error(f"An error occurred in AboutView: {str(e)}")
+            raise
 
 
 class Error404View(View):
     """
     Пользовательское представление ошибки 404
     """
-
-    def get(self, request, *args, **kwargs):
-        return render(request, 'errors/404.html', status=404)
+    try:
+        def get(self, request, *args, **kwargs):
+            return render(request, 'errors/404.html', status=404)
+    except Exception as e:
+        logger.error(f"An error occurred in Error404View: {str(e)}")
+        raise
 
 
 class Error500View(View):
     """
     Пользовательское представление ошибки 500
     """
-
-    def get(self, request, *args, **kwargs):
-        return render(request, 'errors/500.html', status=500)
+    try:
+        def get(self, request, *args, **kwargs):
+            return render(request, 'errors/500.html', status=500)
+    except Exception as e:
+        logger.error(f"An error occurred in Error500View: {str(e)}")
+        raise

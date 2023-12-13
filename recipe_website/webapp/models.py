@@ -5,6 +5,10 @@ from django.utils import timezone
 from django.core.files.storage import default_storage
 from imagekit.models import ProcessedImageField, ImageSpecField
 from imagekit.processors import ResizeToFit
+from django.contrib import messages
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 class Category(models.Model):
@@ -34,7 +38,7 @@ class Recipe(models.Model):
     description = models.TextField(verbose_name="Описание рецепта")
     ingredients = models.TextField(verbose_name="Ингредиенты")
     cooking_steps = models.TextField(verbose_name="Шаги приготовления")
-    cooking_time = models.DurationField(verbose_name="Время приготовления (мин:сек)")
+    cooking_time = models.DurationField(verbose_name="Время приготовления (чч:мм:сс)")
     image = ProcessedImageField(upload_to=user_directory_path,
                                 processors=[ResizeToFit(1024, 768)],
                                 format='JPEG',
@@ -66,16 +70,24 @@ class Recipe(models.Model):
         """
         Перед сохранением объекта, удаляем старое изображение
         """
-        if self.pk:
-            old_recipe = Recipe.objects.get(pk=self.pk)
-            if self.image != old_recipe.image:
-                old_recipe.image.delete(save=False)
-        super().save(*args, **kwargs)
+        try:
+            if self.pk:
+                old_recipe = Recipe.objects.get(pk=self.pk)
+                if self.image != old_recipe.image:
+                    old_recipe.image.delete(save=False)
+            super().save(*args, **kwargs)
+        except Exception as e:
+            logger.error(f"Error saving recipe (ID: {self.pk}): {str(e)}")
+            messages.error(None, "Произошла ошибка при сохранении рецепта.")
 
     def delete(self, *args, **kwargs):
         """
         Переопределение метода delete для удаления изображения при удалении рецепта
         """
-        default_storage.delete(self.image.name)
-        default_storage.delete(self.image_thumbnail.name)
-        super().delete(*args, **kwargs)
+        try:
+            default_storage.delete(self.image.name)
+            default_storage.delete(self.image_thumbnail.name)
+            super().delete(*args, **kwargs)
+        except Exception as e:
+            logger.error(f"Error deleting recipe (ID: {self.pk}): {str(e)}")
+            messages.error(None, "Произошла ошибка при удалении рецепта.")

@@ -145,3 +145,4 @@ recipe_website/.env
 posts.json
 
 users_media/
+CACHE/

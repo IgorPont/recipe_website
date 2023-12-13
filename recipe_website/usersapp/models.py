@@ -1,6 +1,9 @@
 from django.db import models
 from django.contrib.auth.models import User
 from PIL import Image
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 def user_directory_path(instance, filename):
@@ -28,23 +31,30 @@ class Profile(models.Model):
         Переопределение метода save для сжатия загруженных пользователем аватарок,
         а также удаление старых аватарок, при их обновлении новыми
         """
-        super().save(*args, **kwargs)
+        try:
+            super().save(*args, **kwargs)
 
-        valid_extensions = ['.jpg', '.jpeg', '.png', '.gif']
+            # Допустимые расширения файла
+            valid_extensions = ['.jpg', '.jpeg', '.png', '.gif']
 
-        if any(self.image.path.lower().endswith(ext) for ext in valid_extensions):
-            # Проверка, что загруженный файл является изображением
-            img = Image.open(self.image.path)
+            if any(self.image.path.lower().endswith(ext) for ext in valid_extensions):
+                # Проверка, что загруженный файл является изображением
+                img = Image.open(self.image.path)
 
-            if img.width > 300 or img.height > 300:
-                # Сжимаем изображение
-                output_size = (300, 300)
-                img.thumbnail(output_size)
-                img.save(self.image.path)
+                if img.width > 300 or img.height > 300:
+                    # Сжимаем изображение
+                    output_size = (300, 300)
+                    img.thumbnail(output_size)
+                    img.save(self.image.path)
+        except Exception as e:
+            logger.error(f"An error occurred while saving profile image: {str(e)}")
 
     def delete(self, *args, **kwargs):
         """
         Переопределение метода delete для удаления изображения при удалении профиля
         """
-        self.image.delete()
-        super().delete(*args, **kwargs)
+        try:
+            self.image.delete()
+            super().delete(*args, **kwargs)
+        except Exception as e:
+            logger.error(f"An error occurred while deleting profile: {str(e)}")
