@@ -1,6 +1,5 @@
 from django.db import models
 from django.contrib.auth.models import User
-from django.core.files.storage import default_storage
 from PIL import Image
 
 
@@ -14,7 +13,8 @@ def user_directory_path(instance, filename):
 
 class Profile(models.Model):
     user: User = models.OneToOneField(User, on_delete=models.CASCADE, verbose_name="Пользователь сайта")
-    image = models.ImageField(default='avatar_default.jpg', upload_to=user_directory_path, verbose_name="Аватар")
+    image = models.ImageField(default='avatar_default_cblgpyo.jpg', upload_to=user_directory_path,
+                              verbose_name="Аватар")
 
     class Meta:
         verbose_name = 'Профиль пользователя сайта'
@@ -28,14 +28,7 @@ class Profile(models.Model):
         Переопределение метода save для сжатия загруженных пользователем аватарок,
         а также удаление старых аватарок, при их обновлении новыми
         """
-        old_image_path = self.image.path if self.pk else None
-
         super().save(*args, **kwargs)
-
-        if self.image and old_image_path:
-            # Перед сохранением нового изображения удаляем старое
-            if default_storage.exists(old_image_path):
-                default_storage.delete(old_image_path)
 
         valid_extensions = ['.jpg', '.jpeg', '.png', '.gif']
 

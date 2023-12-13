@@ -14,7 +14,7 @@
           </div>
         {% endif %}
       </div>
-      <h2 class="article-title">{{ object.title }}</h2>
+      <h3 class="article-title">{{ object.title }}</h3>
       <img src="{{ object.image.url }}" class="img-fluid rounded" style="max-height: 500px; width: auto; margin-bottom: 1rem; object-fit: contain;" alt="{{ object.title }}">
       <p class="article-content"><b>Рецепт из категории:</b> "{{ object.category }}"</p>
       <p class="article-content"><b>Время приготовления:</b><br>{{ object.cooking_time|total_minutes }}</p>

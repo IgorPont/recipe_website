@@ -187,6 +187,7 @@ class Error404View(View):
     """
     Пользовательское представление ошибки 404
     """
+
     def get(self, request, *args, **kwargs):
         return render(request, 'errors/404.html', status=404)
 
@@ -195,10 +196,6 @@ class Error500View(View):
     """
     Пользовательское представление ошибки 500
     """
+
     def get(self, request, *args, **kwargs):
         return render(request, 'errors/500.html', status=500)
-
-
-# todo: Дописать логирование
-# todo: Дописать обработку исключений при работе с базой данных
-# todo: Накатить тесты

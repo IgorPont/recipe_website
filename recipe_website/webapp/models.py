@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.urls import reverse
 from django.utils import timezone
+from django.core.files.storage import default_storage
 from imagekit.models import ProcessedImageField, ImageSpecField
 from imagekit.processors import ResizeToFit
 
@@ -33,7 +34,7 @@ class Recipe(models.Model):
     description = models.TextField(verbose_name="Описание рецепта")
     ingredients = models.TextField(verbose_name="Ингредиенты")
     cooking_steps = models.TextField(verbose_name="Шаги приготовления")
-    cooking_time = models.DurationField(verbose_name="Время приготовления")
+    cooking_time = models.DurationField(verbose_name="Время приготовления (мин:сек)")
     image = ProcessedImageField(upload_to=user_directory_path,
                                 processors=[ResizeToFit(1024, 768)],
                                 format='JPEG',
@@ -75,6 +76,6 @@ class Recipe(models.Model):
         """
         Переопределение метода delete для удаления изображения при удалении рецепта
         """
-        self.image.delete(save=False)
-        self.image_thumbnail.delete(save=False)
+        default_storage.delete(self.image.name)
+        default_storage.delete(self.image_thumbnail.name)
         super().delete(*args, **kwargs)
