@@ -55,8 +55,6 @@ def profile(request):
                 p_form.save()
                 messages.success(request, f'Ваш профиль успешно обновлен.')
                 return redirect('profile')
-            else:
-                messages.error(request, f'Произошла ошибка. Пожалуйста, проверьте введенные данные.')
         else:
             u_form = UserUpdateForm(instance=request.user)
             p_form = ProfileUpdateForm(instance=request.user.profile)

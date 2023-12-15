@@ -83,7 +83,7 @@ class RecipeByCategoryView(ListView):
             raise
 
     def get_context_data(self, **kwargs):
-        # Обработчик переменной 'categories' для меню категорий рецептов
+        # Добавлен обработчик переменной 'categories' для меню категорий рецептов
         try:
             context = super().get_context_data(**kwargs)
             context['category'] = get_object_or_404(Category, id=self.kwargs['category_id'])
@@ -128,10 +128,11 @@ class RecipeCreateView(LoginRequiredMixin, CreateView):
             form.instance.author = self.request.user
             form.instance.title = form.cleaned_data['title'].upper()
             result = super().form_valid(form)
-            messages.success(self.request, 'Рецепт успешно добавлен.')
+            messages.success(self.request, f'Рецепт успешно добавлен.')
             return result
         except Exception as e:
             logger.error(f"An error occurred in RecipeCreateView: {str(e)}")
+            messages.error(self.request, f'Произошла ошибка при сохранении рецепта.')
             raise
 
     def form_invalid(self, form):
@@ -220,6 +221,7 @@ class RecipeDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
             return super().delete(request, *args, **kwargs)
         except Exception as e:
             logger.error(f"An error occurred in RecipeDeleteView: {str(e)}")
+            messages.error(self.request, f'Произошла ошибка при удалении рецепта.')
             raise
 
     def get_context_data(self, **kwargs):

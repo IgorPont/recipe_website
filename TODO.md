@@ -57,7 +57,7 @@
 ### In Progress ···
 
 
-todo: Накатить тесты
+todo: Тесты
 
 
 ### Done ✓
