@@ -29,6 +29,10 @@ DEBUG = True if os.getenv('DEBUG') == "True" else False
 
 ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS').split()
 
+SESSION_COOKIE_SECURE = True
+
+CSRF_COOKIE_SECURE = True
+
 # Обработчики ошибок
 handler404 = 'webapp.views.Error404View.as_view'
 handler500 = 'webapp.views.Error500View.as_view'
@@ -130,12 +134,12 @@ DEFAULT_FILE_STORAGE = 'django.core.files.storage.FileSystemStorage'
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
-STATIC_URL = '/static/'
+STATIC_URL = 'static/'
 # STATICFILES_DIRS = [os.path.join(BASE_DIR, 'webapp/static'),
 #                     os.path.join(BASE_DIR, 'userapp/static')]
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
-MEDIA_URL = '/media/'
+MEDIA_URL = 'media/'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
