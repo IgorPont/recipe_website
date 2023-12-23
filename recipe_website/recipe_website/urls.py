@@ -4,6 +4,11 @@ from django.conf import settings
 from django.conf.urls.static import static
 from usersapp import views as user_views
 
+from webapp import views as webapp_views
+
+handler404 = webapp_views.Error404View.as_view()
+handler500 = webapp_views.Error500View.as_view()
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('register/', user_views.register, name='register'),

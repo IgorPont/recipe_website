@@ -21,10 +21,7 @@ urlpatterns = [
     path('about/', AboutView.as_view(), name='webapp-about'),
 ]
 
-handler404 = Error404View.as_view()
-handler500 = Error500View.as_view()
-
-# включаем возможность обработки картинок в режиме DEBUG
+# включаем возможность обработки изображений и статики в режиме DEBUG
 if settings.DEBUG:
     urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

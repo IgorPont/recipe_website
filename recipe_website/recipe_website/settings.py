@@ -29,9 +29,10 @@ DEBUG = True if os.getenv('DEBUG') == "True" else False
 
 ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS').split()
 
+# False - включить использование куков без HTTPS
 SESSION_COOKIE_SECURE = True
-
 CSRF_COOKIE_SECURE = True
+CSRF_COOKIE_HTTPONLY = True
 
 # Обработчики ошибок
 handler404 = 'webapp.views.Error404View.as_view'
@@ -55,11 +56,11 @@ MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
-    'webapp.middleware.CustomExceptionHandlerMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'webapp.middleware.CustomExceptionHandlerMiddleware',
 ]
 
 ROOT_URLCONF = 'recipe_website.urls'
@@ -134,12 +135,16 @@ DEFAULT_FILE_STORAGE = 'django.core.files.storage.FileSystemStorage'
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
-STATIC_URL = 'static/'
-# STATICFILES_DIRS = [os.path.join(BASE_DIR, 'webapp/static'),
-#                     os.path.join(BASE_DIR, 'userapp/static')]
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+STATIC_URL = '/static/'
+MEDIA_URL = '/media/'
+
+# Указывается абсолютные пути и не забыть предоставить доступ к файлам для веб-сервера
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
-MEDIA_URL = 'media/'
+
+# Дополнительные директории со статикой (при необходимости)
+# STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static'),
+#                     os.path.join(BASE_DIR, 'media')]
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field

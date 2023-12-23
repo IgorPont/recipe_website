@@ -1,4 +1,5 @@
 from django.shortcuts import render
+from django.http import Http404
 import logging
 
 logger = logging.getLogger(__name__)
@@ -7,7 +8,7 @@ logger = logging.getLogger(__name__)
 class CustomExceptionHandlerMiddleware:
     """
     Кастомное логирование необработанных исключений и
-    возврат страницы с ошибкой 500
+    возврат страницы с ошибками 404 и 500
     """
 
     def __init__(self, get_response):
@@ -19,8 +20,16 @@ class CustomExceptionHandlerMiddleware:
 
     def process_exception(self, request, exception):
         # Логирование исключения
-        logger.exception("An error occurred: %s", str(exception))
+        logger.exception(f"An error occurred: {exception}")
 
         # Возвращаем пользователю страницу с ошибкой 500
         if isinstance(exception, Exception):
-            return render(request, 'errors/500.html', status=500)
+            # Передайте дополнительную информацию в контекст, если это нужно
+            return render(request, 'errors/500.html', {'exception': str(exception)}, status=500)
+
+        # Возвращаем пользователю страницу с ошибкой 404
+        if isinstance(exception, Http404):
+            return render(request, 'errors/404.html', status=404)
+
+        # Возвращаем None, чтобы Django продолжил обработку исключения
+        return None
