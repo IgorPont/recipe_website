@@ -25,7 +25,7 @@ class RecipeListView(ListView):
     # Сортировка объектов по дате публикации в убывающем порядке
     ordering = ['-created_date']
     # Пагинация постов с рецептами
-    paginate_by = 6
+    paginate_by = 5
 
     def get_context_data(self, **kwargs):
         # Обработчик переменной 'categories' для меню категорий рецептов
@@ -45,7 +45,7 @@ class UserRecipeListView(ListView):
     model = Recipe
     template_name = 'webapp/user_recipes.html'
     context_object_name = 'recipes'
-    paginate_by = 6
+    paginate_by = 5
 
     def get_queryset(self):
         try:
@@ -251,6 +251,18 @@ class AboutView(TemplateView):
         except Exception as e:
             logger.error(f"An error occurred in AboutView: {str(e)}")
             raise
+
+
+class Error403View(View):
+    """
+    Пользовательское представление ошибки 403
+    """
+    try:
+        def get(self, request, *args, **kwargs):
+            return render(request, 'errors/403.html', status=403)
+    except Exception as e:
+        logger.error(f"An error occurred in Error404View: {str(e)}")
+        raise
 
 
 class Error404View(View):

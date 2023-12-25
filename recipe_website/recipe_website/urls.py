@@ -3,9 +3,9 @@ from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
 from usersapp import views as user_views
-
 from webapp import views as webapp_views
 
+handler403 = webapp_views.Error403View.as_view()
 handler404 = webapp_views.Error404View.as_view()
 handler500 = webapp_views.Error500View.as_view()
 

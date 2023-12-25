@@ -4,12 +4,13 @@ from django.conf import settings
 from .views import (
     RecipeListView, UserRecipeListView, RecipeDetailView,
     RecipeCreateView, RecipeUpdateView, RecipeDeleteView,
-    RecipeByCategoryView, AboutView, Error404View,
+    RecipeByCategoryView, AboutView, Error403View, Error404View,
     Error500View
 )
 
 urlpatterns = [
     path('', RecipeListView.as_view(), name='webapp-home'),
+    path('error403/', Error403View.as_view(), name='error403'),
     path('error404/', Error404View.as_view(), name='error404'),
     path('error500/', Error500View.as_view(), name='error500'),
     path('user/<str:username>', UserRecipeListView.as_view(), name='user-recipes'),
