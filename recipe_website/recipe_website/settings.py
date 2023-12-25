@@ -34,10 +34,6 @@ SESSION_COOKIE_SECURE = True
 CSRF_COOKIE_SECURE = True
 CSRF_COOKIE_HTTPONLY = True
 
-# Обработчики ошибок
-handler404 = 'webapp.views.Error404View.as_view'
-handler500 = 'webapp.views.Error500View.as_view'
-
 # Application definition
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -48,6 +44,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'webapp.apps.WebappConfig',
     'usersapp.apps.UsersappConfig',
+    'apiapp.apps.UsersappConfig',
     'crispy_forms',
     'crispy_bootstrap4',
 ]
@@ -192,6 +189,11 @@ LOGGING = {
             'propagate': True,
         },
         'usersapp': {
+            'handlers': ['console', 'file'],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
+        'apiapp': {
             'handlers': ['console', 'file'],
             'level': 'DEBUG',
             'propagate': True,
